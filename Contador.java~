@@ -1,0 +1,48 @@
+public class Contador implements Runnable {
+  private int contador = 0;
+  private static final int rondas = 100000;
+
+  public void run () {
+      String nombre = Thread.currentThread().getName();
+      int id = (nombre.equals("hilo1")) ? 1 : 2;
+      
+      try{
+      for(int i = 0; i < Contador.rondas; i++) {
+	  int tmp = contador;
+	  if (id == 2 && i == 0) Thread.sleep(1);
+	  if (id == 1 && i == 1) Thread.sleep(10);
+	  if (id == 2 && i == 99999 {
+	      Thread.sleep(15);
+	      System.out.println(i);
+	  }
+	  contador = tmp + 1;
+      }
+      } catch (InterruptedException e) {
+        System.out.println ("Se interrumpio el hilo!");
+      }
+  }
+
+  public String toString() {
+    return "" + this.contador;
+  }
+
+  public static void main (String[] args) {
+    try {
+      Contador c = new Contador();
+
+      //Se crean dos hilos que ejecutan el metodo run()
+      Thread t1 = new Thread (c, "hilo1");
+      Thread t2 = new Thread (c, "hilo2");
+
+      t1.start (); t2.start ();
+
+      //Espera a que los hilos terminen
+      t1.join (); t2.join ();
+
+      //Imprime el contador
+      System.out.println(c);
+    } catch (InterruptedException e) {
+      System.out.println ("Se interrumpio el hilo!");
+    }
+  }
+}

@@ -1,0 +1,12 @@
+public class hilo{
+    public static void main(String[] args){
+	Hilo h = new Hilo();
+	System.out.println("Adios Mundo");
+    }
+}
+
+public class Hilo extrends Thread {
+    public void run(){
+	System.out.println("Holamundo");
+    }
+}

@@ -1,0 +1,208 @@
+\documentclass[a4papper,12pts]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+%% \usepackage{sectsty}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{graphicx}
+\graphicspath{{./}}
+
+\begin{document}
+\title{\Huge Computación Distribuida \\ Tarea 8}
+\author{\Large Semenov Flores Dimitri \\ \Large Perea Domínguez Edgar Samuel}
+\date{\today}
+\maketitle
+
+\section{Ejercicio 1  }
+Dado el algoritmo 3CP visto en claso tenemos los siguientes puntos
+	\begin{itemize}
+		\item El minímo número de rondas que se puede ejecutar el algoritmo son dos.
+		Este se caso se da cuando todos los procesos deciden \textbf{abort}, ya que en este
+		caso el coordinador envia un mensaje preguntando a todos los procesos su desición,
+		todos los procesos deciden \textbf{abort}, envian su decision al coordinador y terminan,
+		finalmente el coordinardor recibe los mensajes de los procesos vivos y al ver
+		el primer \textbf{abort} el coordinador decide \textbf{abort} y termina
+		
+		
+		\item El máximo número de rondas que puede ejecutar el algoritmo son 
+		5, esto se da cuando todos los procesos votan con un \textbf{si} y
+		 donde el proceso que funciona/funge como
+		coordinador no falla. En el caso anterior se necesitan al menos dos rondas para que
+		el coordinar envie y reciba los mensajes de tipo \textit{precommit}, después como 
+		todos los procesos votaron con un \textbf{si} tenemos que el coordinardor envia 
+		un mens	je de tipo \textit{pre-commit} a todos lo procesos, seguido de esto
+		los procesos responden con un mensaje de tipo de \textit{acknownledge} al coordinardor
+		y este finalmente decide \textbf{commit}, envia un mensaje de commit a todos los
+		procesos, termina y los demas procesos reciben el mensaje, deciden \textbf{commit}
+		y terminan. Lo anterior toma 5 rondas por lo cual el máximo número de rondas que puede
+		ejecutar el algorimto es 5 
+	\end{itemize}
+
+
+\section{Ejercicio 2  }
+
+Ejemplos de ejecuciones donde el algoritmo 3CP anterior falla.
+Sean $p_{1},p_{2},\dots,p_{n-1},p_{n}$ los procesos, donde además $p_{c}$ es el proceso
+que funciona como coordinador con $c \in \{1,2,\dots,n-1,n\}$ y llamemos al detector de fallos
+que se usa $\Omega$
+
+	\begin{itemize}
+	
+		\item Supongamos que los n procesos votan con un si y que ningún proceso falla hasta antes del punto
+		donde el coordinador envia los mensajes de tipo \textit{commit} a los procesos vivos.
+		Diagmos que  $p_{c}$ logra enviar el mensaje de tipo \textit{commit} a la mitad
+		de los procesos, pero que muere antes de enviar el mensaje tipo 
+		 \textit{commit} al resto de los procesos vivos.
+		 Sean $p_{i},p_{j}$ dos procesos con $i,j \in \{1,2,\dots,n\}$ y $ i \neq j$  ambos 
+		 distintos de $p_{c}$ tal que $p_{i}$ recibio el mensaje \textit{commit}
+		 y $p_{j}$ no recibio el mensaje \textit{commit} 
+		
+		Como $p_{j}$ no recibio el mensaje va a esperar hasta que $\Omega$ le avise
+		que el proceso $p_{c}$ ha fallado y como $p_{j}$ no recibio mensaje va
+		a decidir \textit{abort}, mientras que el proceso $p_{i}$ recibe el mensaje antes de que
+		$p_{c}$ falle y por lo tanto decide \textit{commit}.
+		
+		Dado lo anterior tenemos que al final de la ejecución del protocolo existen al 
+		menos dos procesos que deciden valores distintos. Por lo tanto el algoritmo 
+		falla
+	
+		\item A poco existe otro tipo de ejecucion donde falla ? WTF 
+	
+	\end{itemize}
+
+\section{Ejercicio 3  }
+
+Razones por las cuales es preferible evitar programar con \textit{timeouts}
+
+\begin{itemize}
+
+	\item Nuestro algoritmo pierde portabilidad y aumenta su acoplamiento, esto debido
+	a que el tiempo de retardo que toma enviar y recibir un mensaje entre dos procesos
+	$p$ y $q$ depende de la red donde se implementa
+
+
+	\item Estimar un valor \textit{Timeout} adecuado puede ser muy complicado
+	en sistemas asíncronos, ya que no existe cotas adecuadas sobre cuanto 
+	tiempo un procesos de esperar antes de sospechar de otra, esto debido a que 
+	cada procesos se ejecuta a una velocidad distinta
+
+
+	\item En la práctica los valores que puede tomar \textit{Timeout} tienen una naturaleza
+	dinámica, esto debido a que durante la fase cuando el coordinador solicita votos
+	conviene tener una valor alto para aumentar la probabilidad de que los procesos
+	voten con un \textit{si} y no decidan abortar de forma prematura, pero cuando la desicion ya ha sido
+	tomada (cuando los procesos esperan el mensaje \textit{commit} del coordinador)
+	 es mejor tener un valor pequeño para el \textit{Timeout} ya que en caso de que el 
+	 coordinador tarde mucho en enviar los mensajes conviene cambiar a otro coordinador
+	 que pueda enviar los mensajes más rápido
+
+	\item Dadas que las consideraciones que se tiene que tomar para asignar valores
+	de \textit{timeouts} adecuados son muchas se vuelven dificiles de programar
+
+
+	\item Razon 5
+
+
+\end{itemize}
+
+
+\section{Ejercicio 4  }
+
+Para demostrar la correctez del algoritmo tenemos que demostrar las propiedades de
+acuerdo, terminación y validez
+
+Suponemos que el detector de fallos que se utiliza S es el visto en clase que cumple
+las siguientes propiedades
+	\begin{itemize}
+		\item Si un proceso $p_{j}$ falla, tenemos que eventualmente va a ser 
+		sospechados
+		
+		\item Existe al menos un proceso correcto $p_{i}$ del cual nunca se sospecha
+	\end{itemize}
+	
+Dado lo anterior tenemos lo siguiente
+
+	\begin{itemize}
+	
+		\item \textbf{Terminación}. Tenemos que los procesos no pueden esperar eternamente
+		a recibir un mensaje de $PHASE2$ ya que el máximo número de procesos que pueden
+		fallar son $\frac{n}{2}$
+		Por la propiedad del detector de fallos tenemos que existe un proceso $p_{c}$
+		correcto tal que eventualmente nadie sospecha de el, por lo que existe una ronda
+		$r_{c}$ donde nadie sospecha de $p_{c}$ y por lo tanto todos los procesos adoptan el valor
+		$v_{c}$, por lo que los mensajes $PHASE2$ enviados son del tipo $\{v_{c}\}$ y por lo tanto
+		al primer proceso $p_{i}$ que reciba más de la mitad de mensajes entra en 
+		\textit{case} $rec_{i} = \{v_{c}\}$ por lo que envia la decision con el valor
+		$v_{c}$ y termina, al ver que ya se tomo una decision el resto de procesos deciden
+		el mismo valor y terminan
+		
+		\item \textbf{Validez} Tenemos que los procesos solo toman el valor que ellos propusieron
+		o el valor enviado por otro proceso en $PHASE1$, pero los valores enviados
+		en $PHASE1$ es el valor propuesto por el proceso lider de esa ronda o un valor que
+		el adquirio por otro proceso lider de otro ronda
+		
+		Por lo tanto el valor que deciden los procesos es una valor propuesto por algún proceso
+		
+		\item \textbf{Acuerdo}. Siguiendo la idea argumentada para \textbf{Terminación}
+		tenemos que como existe algún proceso $p_{i}$ correcto tal que eventualmente ningún
+		proceso sospecha de el, por lo que exsite una ronda $r_{m}$ tal que $m \% n = i$ donde
+		ningún proceso sospecha de $p_{i}$ por lo que cuando $p_{i}$ transmite su valor a todos
+		los procesos estos guardan el valor $v_{i}$ y al enviar el mensaje
+		$PHASE2$ de la ronda todos reciben el mismo valor, por lo que al proceso que primero
+		reciba mas de la mitad de los mensajes decide el valor $v_{i}$, le avisa a los demas
+		procesos y todos los procesos correctos deciden $v_{i}$
+		
+		Por lo tanto el algoritmo cumple la propiedad de \textbf{Acuerdo}
+	
+	\end{itemize}
+	
+
+
+\section{Ejercicio 5  }
+
+Sean $p_{1},p_{2}, \dots, p_{n}$ nuestros procesos, $v_{1},_v{2},\dots,v_{n}$ los valores
+iniciales de nuestros procesos y supongamos pueden fallar $t = \frac{n}{2}$ procesos
+
+En la ronda $r_{1}$ el proceso $p_{1}$ envia un mensaje $PHASE1(1,v_{1})$ a todos los procesos
+Suponemos que ningún procesos sospecha de $p_{1}$ por lo que todos los procesos reciben el
+mensaje y guardan el valor $v_{1}$ en la variable \textit{aux}
+
+Suponemos que $t$ procesos fallan antes de ejecutar la instrucción \textit{broadcast} $PHASE2(r,v)$
+
+Dado lo anterior como fallaron la mitad de los procesos y no pudieron enviar su mensaje tenemos
+que los procesos restantes se quedan estancaddos esperando a recibir un mensaje 
+$PHASE2$ de la mayoría de los procesos, ya que la mayoría de los procesos crasheo antes
+de enviar su mensaje, por lo que el algoritmo falla ya que no cumple la propiedad de
+\textbf{Terminiación}
+
+
+\section{Ejercicio 6  }
+
+\begin{itemize}
+\item Sueño 6
+  Cuenta sobre un mundo con el tiempo absoluto donde el tiempo es lo único real, lo único predecible
+  en lo que se puede creer y que el mundo entrero se puede refujiar en el tiempo y que las cosas
+  que han pasado están en un tiempo preciso del pasado.
+\item Sueño 7
+  Aquí se ve un mundo totalmente distinto al anterior donde el tiempo no tiene relación de acción consecuencia
+  donde el tiempo es erratico y las predicciónes no tienen sentido pues no existe relación aparente entre los
+  sucesos, lo que hace que sea un mundo impulsivo y sincero.
+\item Sueño 8
+  Ahora cuenta la historia de una pareja que se reunen cada año pero realmente no cambian mucho sus vidas de
+  un año a otro y esto es justo lo que caracterisa a este mundo, un mundo que a pesar de que el tiempo
+  transcurre las cosas no cambian mucho
+\item Sueño 9
+  El sueño cuenta un fin del mundo que es conocido con antelación, todo el mundo deja de preocuparse y empiezan
+  a disfrutar más la vida mientras más se acerca el final todos se van uniendo más y las diferencias entre la gente
+  se olvidan, la gente hace las cosas que no se atrevía cuando sabía que habría futuro, así hasta que llega
+  la fecha.
+\item Sueño 10
+  Este sueño habla de una villa donde se separa el tiempo por lugares de manera discreta por así decirlo,
+  además de que en esta viven sujetos que se quedaron atrapados en un tiempo del pasado del cual concervan
+  memorias ya sean buenas o malas, las viven ellos solos.
+
+\end{document}
