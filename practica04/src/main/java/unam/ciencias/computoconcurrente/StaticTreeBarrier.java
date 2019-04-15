@@ -65,13 +65,10 @@ public class StaticTreeBarrier implements Barrier {
             boolean mySense = threadSense.get();
             while (childCount.get() > 0){
                 try {
-                    Thread.sleep(50);    
+                    Thread.sleep(10);    
                 } catch (Exception e) {
                     Thread.currentThread().interrupt();
                 }
-                
-                System.out.print("El while de child mayor a 0: ");
-                System.out.println(Thread.currentThread().getName());
             }
             this.childCount.set(this.children);
             if (parent != null) {
@@ -82,8 +79,6 @@ public class StaticTreeBarrier implements Barrier {
                     } catch (Exception e) {
                         Thread.currentThread().interrupt();
                     }
-                    System.out.print("El while de not root: ");
-                    System.out.println(Thread.currentThread().getName());
                 }
             } else {
                 sense = !sense;

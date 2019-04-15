@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BarrierTest {
 
     static int THREADS_COUNT = 5;
-    static int FRAMES_LEN = 30;
+    static int FRAMES_LEN = 1000;
     static int RADIX = 2;
 
     Thread[] threads;
@@ -44,8 +44,6 @@ public class BarrierTest {
 
     void fillFrames() {
         for(int i = 0; i < FRAMES_LEN; i++) {
-            System.out.print("thread: "+String.valueOf(i)+"  ");
-            System.out.println(Thread.currentThread().getName());
             frames[i].getAndIncrement();
             barrier.await();
             Utils.sleepCurrentThread((int)(Math.random() * 100));
@@ -92,15 +90,12 @@ public class BarrierTest {
     public void test() throws InterruptedException {
 
         verificationThread.start();
-        System.out.println("aver que pedo");
         for(Thread t : threads) {
             t.start();
         }
-        System.out.println("aver que pedo2");
         for(Thread t : threads) {
             t.join();
         }
-        System.out.println("aver que pedo3");
         verificationThread.join();
 
         Assert.assertTrue(this.isFramesArrayValid);
