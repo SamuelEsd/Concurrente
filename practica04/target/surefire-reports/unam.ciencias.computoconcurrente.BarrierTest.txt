@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: unam.ciencias.computoconcurrente.BarrierTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.417 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.025 sec

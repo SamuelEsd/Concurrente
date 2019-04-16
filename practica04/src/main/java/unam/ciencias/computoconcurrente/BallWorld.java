@@ -15,6 +15,7 @@ public class BallWorld extends JPanel {
     private static final int _HEIGHT = 400;
     private static final Color BG_COLOR = Color.white;
     private static Semaphore sem = new Semaphore(1);
+    private static Barrier barrie = new StaticTreeBarrier(4, 2);
 
     private List<Ball> balls;
 
@@ -36,6 +37,10 @@ public class BallWorld extends JPanel {
 
     public void release(){
         sem.release();
+    }
+
+    public void await(){
+        barrie.await();
     }
 
     public void addBall(final Ball b) {

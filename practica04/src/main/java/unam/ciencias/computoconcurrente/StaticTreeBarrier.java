@@ -26,22 +26,23 @@ public class StaticTreeBarrier implements Barrier {
     }
 
     void build(Node parent, int depth){
-        if (depth == 0){
-            if (nodes < node.length){
-                node[nodes++] = new Node(parent, 0);
-                parent.children++;
-                parent.childCount.incrementAndGet();
+        for(int i = 0; i < node.length; i++){
+            Node myNode;
+            if(i > 0){
+                myNode = new Node(node[(i-1)/2], 0);
             }
-        } else {
-            Node myNode = new Node(parent, 0);
-            if (parent != null){
-                parent.children++;
-                parent.childCount.incrementAndGet();
+            else{
+                myNode = new Node(null, 0);
             }
-            node[nodes++] = myNode;
-            for (int i = 0; i < radix; i++){
-                build(myNode, depth - 1);
+            if((i*2)+1 < node.length){
+                myNode.children++;
+                myNode.childCount.incrementAndGet();
             }
+            if((i*2)+2 < node.length){
+                myNode.children++;
+                myNode.childCount.incrementAndGet();
+            }
+            node[i] = myNode;
         }
     }
 
@@ -65,7 +66,7 @@ public class StaticTreeBarrier implements Barrier {
             boolean mySense = threadSense.get();
             while (childCount.get() > 0){
                 try {
-                    Thread.sleep(10);    
+                    Thread.sleep(1);    
                 } catch (Exception e) {
                     Thread.currentThread().interrupt();
                 }

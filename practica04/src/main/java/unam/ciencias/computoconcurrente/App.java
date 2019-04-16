@@ -29,7 +29,6 @@ public class App {
             }
         };
 
-        System.out.println(a.length);
         if (a.length >= 1 && a[0].equals("--enableKiller")){
             hitman.run();
         }
@@ -54,9 +53,10 @@ public class App {
                 new Ball(world, 200, 130, 3, 8, Color.black)
         );
 
+        int i = 0;
         for(Ball b : balls) {
             Utils.sleepCurrentThread((int)(5000 * Math.random()));
-            new Thread(b, String.format("Color %s", b.getColor())).start();
+            new Thread(b, String.valueOf(i++)).start();
         }
     }
 }

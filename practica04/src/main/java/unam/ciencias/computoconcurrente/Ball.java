@@ -24,7 +24,11 @@ public class Ball implements Runnable {
         this.color = color;
         world.addBall(this);
     }
-
+    // ------------------------------------------------
+    // ATENCIÖN!
+    // EN ESTE METODO RUN SE CORRE EL INCISO 3.2.1
+    //-------------------------------------------------
+    // Comenta el otro para apreciar bien la ejecuión de este
     public void run() {
         while(true) {
             move();
@@ -37,6 +41,28 @@ public class Ball implements Runnable {
             }
         }
     }
+
+    private double distToDiagonal(int x, int y){
+        double up = Math.abs((-1*x)+(y));
+        double down = Math.sqrt(2);
+        return up/down;
+    }
+
+
+    // ------------------------------------------------
+    // ATENCIÖN!
+    // EN ESTE METODO RUN SE CORRE EL INCISO 3.2.2
+    //-------------------------------------------------
+    // Comenta el otro para apreciar bien la ejecuión de este
+    // public void run() {
+    //     while(true) {
+    //         if (distToDiagonal(xPos, yPos) < 10) {
+    //             world.await();
+    //         }
+    //         move();
+    //         Utils.sleepCurrentThread(1);
+    //     }
+    // }
 
     public void move() {
         updateMovementDirection();

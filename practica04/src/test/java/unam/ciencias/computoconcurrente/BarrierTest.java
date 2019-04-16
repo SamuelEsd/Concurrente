@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BarrierTest {
 
-    static int THREADS_COUNT = 5;
+    static int THREADS_COUNT = 1000;
     static int FRAMES_LEN = 10;
     static int RADIX = 2;
 
