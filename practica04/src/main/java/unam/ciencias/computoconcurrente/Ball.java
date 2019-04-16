@@ -28,6 +28,13 @@ public class Ball implements Runnable {
     public void run() {
         while(true) {
             move();
+            if (world.tryAcquire()) {
+                world.purge(this);
+                Thread.currentThread().stop();
+            }
+            else{
+                Utils.sleepCurrentThread(1);
+            }
         }
     }
 
